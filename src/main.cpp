@@ -90,7 +90,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
       // draw some shadurs
       sf::Shader shader;
       if(shader.loadFromFile("../../src/shader/rainbow.frag", sf::Shader::Fragment)) {
-        window.draw(shader);
+//        window.draw(shader);
       }
     }
 
