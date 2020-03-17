@@ -7,15 +7,15 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
-
+#include <SFML/Graphics/Shader.hpp>
 
 #include <docopt/docopt.h>
 
-/*
 static constexpr auto USAGE =
   R"(Naval Fate.
 
     Usage:
+          naval_fate start
           naval_fate ship new <name>...
           naval_fate ship <name> move <x> <y> [--speed=<kn>]
           naval_fate ship shoot <x> <y>
@@ -29,25 +29,24 @@ static constexpr auto USAGE =
           --moored      Moored (anchored) mine.
           --drifting    Drifting mine.
 )";
-*/
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 {
-  //  std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
-  //    { std::next(argv), std::next(argv, argc) },
-  //    true,// show help if requested
-  //    "Naval Fate 2.0");// version string
+    std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
+      { std::next(argv), std::next(argv, argc) },
+      true,// show help if requested
+      "Naval Fate 2.0");// version string
 
-  //  for (auto const &arg : args) {
-  //    std::cout << arg.first << arg.second << std::endl;
-  //  }
+    for (auto const &arg : args) {
+      std::cout << arg.first << arg.second << std::endl;
+    }
 
 
   //Use the default logger (stdout, multi-threaded, colored)
-  spdlog::info("Hello, {}!", "World");
+  //spdlog::info("Hello, {}!", "World");
 
 
-  sf::RenderWindow window(sf::VideoMode(1024, 768), "ImGui + SFML = <3");
+  sf::RenderWindow window(sf::VideoMode(1024, 768), "Some game!");
   window.setFramerateLimit(60);
   ImGui::SFML::Init(window);
 
@@ -74,16 +73,27 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     ImGui::Begin("The Plan");
 
     int index = 0;
-    for (const auto &step : { "The Plan", "Getting Started", "Finding Errors As Soon As Possible", "Handling Command Line Parameters", "C++ 20 So Far", "Reading SFML Input States", "Managing Game State", "Making Our Game Testable", "Making Game State Allocator Aware", "Add Logging To Game Engine", "Draw A Game Map", "Dialog Trees", "Porting From SFML To SDL" }) {
+    for (const auto &step : { "Understand what is going on", "Adjust the game", "Render a shader", "Profit! (Stonks)" }) {
       ImGui::Checkbox(fmt::format("{} : {}", index, step).c_str(), std::next(begin(states), index));
       ++index;
     }
 
+    bool can_shade = sf::Shader::isAvailable();
+    ImGui::Text(can_shade ? "Shader is available" : "Shader is NOT available");
 
     ImGui::End();
 
     window.clear();
     ImGui::SFML::Render(window);
+
+    if (can_shade) {
+      // draw some shadurs
+      sf::Shader shader;
+      if(shader.loadFromFile("../../src/shader/rainbow.frag", sf::Shader::Fragment)) {
+        window.draw(shader);
+      }
+    }
+
     window.display();
   }
 
